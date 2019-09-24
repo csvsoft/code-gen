@@ -3,6 +3,7 @@ package com.csvsoft.kafrest.service
 import cats.effect.{Async, ContextShift}
 import com.csvsoft.kafrest.{AppEnvironment, AppTask}
 import com.csvsoft.kafrest.config.{AppConfig, ConfigService}
+import com.csvsoft.kafrest.utils.Log
 import doobie.hikari.HikariTransactor
 import doobie.util.transactor.Transactor
 import org.flywaydb.core.Flyway
@@ -10,10 +11,11 @@ import scalaz.zio.{Managed, Reservation, Task, ZIO, ZManaged}
 
 trait DBService {
   def initDb(): Task[Unit]
-  def mkTransactor(implicit at: Async[Task], cs: ContextShift[Task]): ZManaged[AppEnvironment,Throwable,Transactor[Task]]
+
+  def mkTransactor(implicit at: Async[Task], cs: ContextShift[Task]): ZManaged[AppEnvironment, Throwable, Transactor[Task]]
 }
 
-class DefaultDBService(appConfig: AppConfig, threadPoolService: ThreadPoolService) extends DBService {
+class DefaultDBService(appConfig: AppConfig, threadPoolService: ThreadPoolService) extends DBService with Log{
 
   def initDb(): Task[Unit] = ZIO.effect {
     val cfg = appConfig.DBConfig
@@ -28,11 +30,10 @@ class DefaultDBService(appConfig: AppConfig, threadPoolService: ThreadPoolServic
   }*/
 
 
-
-  def mkTransactor(implicit at: Async[Task], cs: ContextShift[Task]):ZManaged[AppEnvironment,Throwable,Transactor[Task]] = {
+  def mkTransactor(implicit at: Async[Task], cs: ContextShift[Task]): ZManaged[AppEnvironment, Throwable, Transactor[Task]] = {
 
     val cfg = appConfig.DBConfig
-   val x=  for {
+    val x = for {
       connectEC <- threadPoolService.initNonBlockingThreadExecutionContext
       transactEC <- threadPoolService.initNonBlockingThreadExecutionContext
       xa = HikariTransactor.newHikariTransactor[Task](
@@ -48,16 +49,16 @@ class DefaultDBService(appConfig: AppConfig, threadPoolService: ThreadPoolServic
           Reservation(ZIO.succeed(transactor), cleanupM.orDie)
         }.uninterruptible
     } yield res
-     Managed(x)
+    Managed(x)
   }
 
 }
 
 object DBService {
-  def apply(appConfig: AppConfig,  threadPoolService: ThreadPoolService): DBService = new DefaultDBService(appConfig,  threadPoolService)
+  def apply(appConfig: AppConfig, threadPoolService: ThreadPoolService): DBService = new DefaultDBService(appConfig, threadPoolService)
 
   implicit def make(implicit threadPoolService: AppTask[ThreadPoolService]): AppTask[DBService] = for {
     appConfig <- ConfigService.loadConfig()
     pool <- threadPoolService
-  } yield DBService(appConfig,  pool)
+  } yield DBService(appConfig, pool)
 }

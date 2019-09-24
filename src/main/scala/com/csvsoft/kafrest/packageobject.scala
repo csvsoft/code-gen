@@ -15,6 +15,5 @@ package object kafrest {
   type SysEnvironment = Clock with Console with System with Random with Blocking with Log
   type AppEnvironment = BizEnvironment with SysEnvironment
   type AppTask[A] = TaskR[AppEnvironment, A]
-
-  def logInfo[W](w: => W) = ZIO.accessM[AppEnvironment](l => l.logInfo(w))
+  def logInfo[W](w: => String) = ZIO.accessM[AppEnvironment](l => l.log_INFO(w))
 }

@@ -12,11 +12,14 @@ final case class HttpConfig(port: Int, baseUrl: String)
 final case class ThreadPoolConfig(dbBlockingFixPoolSize: Int, nonBlockingFixPoolSize: Int)
 
 final case class KafkaConsumerConfig(bootstrapServer: String, groupId: String, clientId: String, topics: List[String], extraSettings: Map[String, String])
+
 final case class KafkaProducerConfig(bootstrapServer: String, extraSettings: Map[String, String])
-final case class AppConfig(DBConfig: DBConfig, httpConfig: HttpConfig, threadPoolConfig: ThreadPoolConfig, kafkaConsumerConfig: KafkaConsumerConfig,kafkaProducerConfig: KafkaProducerConfig)
+
+final case class AppConfig(DBConfig: DBConfig, httpConfig: HttpConfig, threadPoolConfig: ThreadPoolConfig, kafkaConsumerConfig: KafkaConsumerConfig, kafkaProducerConfig: KafkaProducerConfig)
 
 trait ConfigService {
   val args: Array[String]
+
   def loadConfig(): AppTask[AppConfig]
 }
 
@@ -37,6 +40,7 @@ object ConfigService {
 
     }
   }
+
   def loadConfig(): AppTask[AppConfig] = ZIO.accessM[AppEnvironment](_.loadConfig())
 
   implicit def make(): AppTask[AppConfig] = loadConfig()

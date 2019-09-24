@@ -7,7 +7,7 @@ import scalaz.zio.console.{Console, putStrLn}
 
 object ProgramRunner {
 
-  def run1[R <: Console,E,A](runtime:zio.Runtime[R], program:ZIO[R,E,A]):Nothing ={
+  def runWithRunTime[R <: Console, E, A](runtime: zio.Runtime[R], program: ZIO[R, E, A]): Nothing = {
 
     val result = program.foldM(err => putStrLn(s"Execution failed with: $err") *> ZIO.succeed(1), _ => ZIO.succeed(0))
 
@@ -29,21 +29,8 @@ object ProgramRunner {
 
   def run(args: Array[String], program: AppTask[List[Unit]]) = {
     val runtime = new AppRunTime(args)
-    val result = program.foldM(err => putStrLn(s"Execution failed with: $err") *> ZIO.succeed(1), _ => ZIO.succeed(0))
+    runWithRunTime(runtime,program)
 
-    sys.exit(
-      runtime.unsafeRun(
-        for {
-          fiber <- result.fork
-          _ <- IO.effectTotal(java.lang.Runtime.getRuntime.addShutdownHook(new Thread {
-            override def run() = {
-              val _ = runtime.unsafeRunSync(fiber.interrupt)
-            }
-          }))
-          result <- fiber.join
-        } yield result
-      )
-    )
   }
 
 }

@@ -1,6 +1,6 @@
 package com.csvsoft.kafrest
 
-import com.csvsoft.kafrest.utils.ProgramRunner
+import com.csvsoft.kafrest.utils.{ProgramBuilder, ProgramRunner}
 
 object Main {
 

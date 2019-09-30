@@ -74,8 +74,16 @@ lazy val root = (project in file("."))
       "org.scalaz" %% "scalaz-zio" % ZioVersion,
       "org.scalaz" %% "scalaz-zio-streams" % ZioVersion,
       "org.scalaz" %% "scalaz-zio-interop-cats" % ZioVersion,
+      "org.yaml" % "snakeyaml" % "1.25",
+       "org.scalatra.scalate" %% "scalate-core" % "1.9.4",
+      "org.scalatra.scalate" %% "scalate-util" % "1.9.4",
+      // https://mvnrepository.com/artifact/org.freemarker/freemarker
+       "org.freemarker" % "freemarker" % "2.3.29",
+      "com.github.tototoshi" %% "scala-csv" % "1.3.6",
 
-      "org.scalatest" %% "scalatest" % ScalaTestVersion % "test",
+
+
+"org.scalatest" %% "scalatest" % ScalaTestVersion % "test",
       "io.github.embeddedkafka" %% "embedded-kafka" % "2.2.0" % "test",
       "ch.qos.logback"          % "logback-classic" % "1.2.3" % "test",
        "com.softwaremill.sttp" %% "core" % "1.6.7" % "test"

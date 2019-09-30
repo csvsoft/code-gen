@@ -1,0 +1,3 @@
+<%@ val model: Map[String,Any] %>
+
+Hello ${model.get("firstName")}

@@ -1,0 +1,7 @@
+projectName: project_A
+outputDir: ~/code_gen/project_A
+srcDir: ${outputDir}/src/main/scala
+codeGenItems:
+  - model: schemaA.yaml
+    template: tableA.ftl
+    out: TableA.scala

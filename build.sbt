@@ -80,6 +80,7 @@ lazy val root = (project in file("."))
       // https://mvnrepository.com/artifact/org.freemarker/freemarker
        "org.freemarker" % "freemarker" % "2.3.29",
       "com.github.tototoshi" %% "scala-csv" % "1.3.6",
+      "org.apache.velocity" % "velocity" % "1.7",
 
 
 
